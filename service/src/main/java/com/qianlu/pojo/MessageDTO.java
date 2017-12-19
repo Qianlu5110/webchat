@@ -9,9 +9,14 @@ package com.qianlu.pojo;
 public class MessageDTO implements IMessage {
 
     /**
+     * 消息发送人
+     */
+    private String fromUser;
+
+    /**
      * 消息接收人
      */
-    private String username;
+    private String toUser;
 
     /**
      * 消息类型
@@ -38,12 +43,20 @@ public class MessageDTO implements IMessage {
      */
     private String clickUrl;
 
-    public String getUsername() {
-        return username;
+    public String getFromUser() {
+        return fromUser;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    public String getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
     }
 
     public String getType() {
@@ -89,7 +102,8 @@ public class MessageDTO implements IMessage {
     @Override
     public String toString() {
         return "MessageDTO{" +
-                "username='" + username + '\'' +
+                "fromUser='" + fromUser + '\'' +
+                ", toUser='" + toUser + '\'' +
                 ", type='" + type + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +

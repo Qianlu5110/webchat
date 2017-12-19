@@ -1,13 +1,16 @@
 package com.qianlu.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlu.cache.WsSessionCache;
+import com.qianlu.pojo.MessageDTO;
+import com.qianlu.producer.MsgSenderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Websocket服务
@@ -18,6 +21,9 @@ import java.util.Objects;
 @ServerEndpoint(value = "/websocket/{username}")
 @Component
 public class WebSocketServer {
+
+    @Autowired
+    private MsgSenderService msgSenderService;
 
     /**
      * 连接建立成功调用的方法
@@ -47,16 +53,17 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(@PathParam("username") String username, String message) {
-        //群发消息
-        for (String usernameKey : WsSessionCache.getWebSocketSessionMap().keySet()) {
-            try {
-                //群发消息不给自己发送
-                if (!Objects.equals(username, usernameKey)) {
-                    WsSessionCache.getWebSocketSessionMap().get(usernameKey).getBasicRemote().sendText(message);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        ObjectMapper mapper = new ObjectMapper();
+        MessageDTO messageDTO = null;
+        try {
+            messageDTO = mapper.readValue(message, MessageDTO.class);
+            if (messageDTO == null || messageDTO.getToUser() == null || "".equals(messageDTO.getToUser())) {
+                return;
             }
+            messageDTO.setFromUser(username);
+            msgSenderService.send(messageDTO);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,9 +1,9 @@
 package com.qianlu.consumer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlu.cache.WsSessionCache;
 import com.qianlu.conf.MqConfig;
 import com.qianlu.pojo.MessageDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -32,7 +32,7 @@ public class OnLineMessageService {
         MessageDTO messageDTO = null;
         try {
             messageDTO = mapper.readValue(messsage, MessageDTO.class);
-            if (messageDTO == null || messageDTO.getUsername() == null || "".equals(messageDTO.getUsername())) {
+            if (messageDTO == null || messageDTO.getToUser() == null || "".equals(messageDTO.getToUser())) {
                 return;
             }
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class OnLineMessageService {
         }
 
         try {
-            Session session = WsSessionCache.getWebSocketSessionMap().get(messageDTO.getUsername());
+            Session session = WsSessionCache.getWebSocketSessionMap().get(messageDTO.getToUser());
             if (session != null) {
                 session.getBasicRemote().sendText(messsage);
             } else {

@@ -1,9 +1,9 @@
 package com.qianlu.consumer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlu.cache.WsSessionCache;
 import com.qianlu.conf.MqConfig;
 import com.qianlu.pojo.MessageDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
@@ -50,11 +50,11 @@ public class OffLineMessageService {
                 MessageDTO messageDTO = null;
                 try {
                     messageDTO = mapper.readValue(body, MessageDTO.class);
-                    if (messageDTO == null || messageDTO.getUsername() == null || "".equals(messageDTO.getUsername())) {
+                    if (messageDTO == null || messageDTO.getToUser() == null || "".equals(messageDTO.getToUser())) {
                         return;
                     }
 
-                    Session session = WsSessionCache.getWebSocketSessionMap().get(messageDTO.getUsername());
+                    Session session = WsSessionCache.getWebSocketSessionMap().get(messageDTO.getToUser());
                     if (session != null) {
                         //获取到指定用户的websocket session，则对MQ进行消息消费，确认
                         session.getBasicRemote().sendText(new String(body));

@@ -1,5 +1,7 @@
 package com.qianlu.controller;
 
+import com.qianlu.pojo.IMessage;
+import com.qianlu.pojo.MessageDTO;
 import com.qianlu.producer.MsgSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +25,13 @@ public class TestController {
 
     @GetMapping("/hello")
     public void hello() {
-        msgSenderService.send(
-                "admin",
-                "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4131634322,487666839&fm=27&gp=0.jpg",
-                "https://www.baidu.com",
-                "待办事项标题",
-                "你今天有新的待办事项！" + new Date());
+        MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setType(IMessage.TYPE_HTML);
+        messageDTO.setToUser("15623885110");
+        messageDTO.setHeadImg("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4131634322,487666839&fm=27&gp=0.jpg");
+        messageDTO.setClickUrl("https://www.baidu.com");
+        messageDTO.setTitle("标题");
+        messageDTO.setContent("内容，内容 " + new Date());
+        msgSenderService.send(messageDTO);
     }
 }

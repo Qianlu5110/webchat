@@ -1,10 +1,9 @@
 package com.qianlu.producer;
 
-import com.qianlu.conf.MqConfig;
-import com.qianlu.pojo.IMessage;
-import com.qianlu.pojo.MessageDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qianlu.conf.MqConfig;
+import com.qianlu.pojo.MessageDTO;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,20 +23,9 @@ public class MsgSenderService {
     /**
      * 发送消息
      *
-     * @param username 接收人
-     * @param headImg  头像
-     * @param clickUrl 消息体点击URL
-     * @param title    标题
-     * @param content  内容
+     * @param messageDTO 消息体
      */
-    public void send(String username, String headImg, String clickUrl, String title, String content) {
-        MessageDTO messageDTO = new MessageDTO();
-        messageDTO.setType(IMessage.TYPE_HTML);
-        messageDTO.setUsername(username);
-        messageDTO.setHeadImg(headImg);
-        messageDTO.setClickUrl(clickUrl);
-        messageDTO.setTitle(title);
-        messageDTO.setContent(content);
+    public void send(MessageDTO messageDTO) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             this.rabbitTemplate.convertAndSend(MqConfig.ONLINE_MESSAGE_QUEUE_NAME, mapper.writeValueAsString(messageDTO));
