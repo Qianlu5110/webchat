@@ -9,6 +9,11 @@ package com.qianlu.pojo;
 public interface IMessage {
 
     /**
+     * 消息体存活时间
+     */
+    Long SURVIVAL_TIME = 7 * 24 * 60 * 60 * 1000L;
+
+    /**
      * 注册
      */
     String TYPE_REGISTER = "type/register";

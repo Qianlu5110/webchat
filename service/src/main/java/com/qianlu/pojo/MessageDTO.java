@@ -1,5 +1,7 @@
 package com.qianlu.pojo;
 
+import java.util.Date;
+
 /**
  * 消息体
  *
@@ -42,6 +44,12 @@ public class MessageDTO implements IMessage {
      * 消息点击链接
      */
     private String clickUrl;
+
+    /**
+     * 消息创建时间
+     * 除作为显示时间外，同时创建时间作为逾期消息进行销毁的依据
+     */
+    private Date createDate;
 
     public String getFromUser() {
         return fromUser;
@@ -99,6 +107,14 @@ public class MessageDTO implements IMessage {
         this.clickUrl = clickUrl;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     public String toString() {
         return "MessageDTO{" +
@@ -109,6 +125,7 @@ public class MessageDTO implements IMessage {
                 ", content='" + content + '\'' +
                 ", headImg='" + headImg + '\'' +
                 ", clickUrl='" + clickUrl + '\'' +
+                ", createDate=" + createDate +
                 '}';
     }
 }

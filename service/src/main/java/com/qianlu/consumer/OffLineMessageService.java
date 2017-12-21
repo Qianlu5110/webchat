@@ -3,6 +3,7 @@ package com.qianlu.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlu.cache.WsSessionCache;
 import com.qianlu.conf.MqConfig;
+import com.qianlu.pojo.IMessage;
 import com.qianlu.pojo.MessageDTO;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Message;
@@ -52,6 +53,11 @@ public class OffLineMessageService {
                     messageDTO = mapper.readValue(body, MessageDTO.class);
                     if (messageDTO == null || messageDTO.getToUser() == null || "".equals(messageDTO.getToUser())) {
                         return;
+                    }
+
+                    //离线消息超过一周未被发送 则销毁此离线消息
+                    if (messageDTO.getCreateDate() != null && (System.currentTimeMillis() - messageDTO.getCreateDate().getTime()) > IMessage.SURVIVAL_TIME) {
+                        channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
                     }
 
                     Session session = WsSessionCache.getWebSocketSessionMap().get(messageDTO.getToUser());
